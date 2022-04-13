@@ -33,7 +33,7 @@ echo "enter loki url:"
 read LOKI_URL
 echo "enter host_name:"
 read HOST_NAME
-sed -e "s|<host_name>|${HOST_NAME}|g" ./promtail/promtail-config.yml > ./promtail/promtail-config.yml
+sed -e "s|<host_name>|$HOST_NAME|g;s|<loki_url>|$LOKI_URL|g" ./promtail/example-promtail-config.yml > ./promtail/promtail-config.yml
 
 sudo systemctl start promtail.service
 sudo systemctl enable promtail.service

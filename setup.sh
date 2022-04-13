@@ -4,7 +4,7 @@ SUCCESS='\033[0;32m'
 
 echo "Setting up Prometheus..."
 
-sed -e "s|<current_dir>|$PWD|g;s|<user>|$USER|g" ./prometheus/example_prom.service > ./prometheus/prom.service
+sed -e "s|<current_dir>|$PWD|g;s|<user>|$USER|g" ./prometheus/example_prom.service > /etc/systemd/system/prom.service
 
 sudo systemctl start prom.service
 sudo systemctl enable prom.service
@@ -16,7 +16,7 @@ echo "-------------------------"
 
 echo "Setting up Prometheus Node Exporter..."
 
-sed -e "s|<current_dir>|$PWD|g;s|<user>|$USER|g" ./node_exporter/example_prom_node_exporter.service > ./node_exporter/prom_node_exporter.service
+sed -e "s|<current_dir>|$PWD|g;s|<user>|$USER|g" ./node_exporter/example_prom_node_exporter.service > /etc/systemd/system/prom_node_exporter.service
 
 sudo systemctl start prom_node_exporter.service
 sudo systemctl enable prom_node_exporter.service
@@ -28,7 +28,7 @@ echo "-------------------------"
 
 echo "Setting up Promtail..."
 
-sed -e "s|<current_dir>|$PWD|g;s|<user>|$USER|g" ./promtail/example_promtail.service > ./promtail/promtail.service
+sed -e "s|<current_dir>|$PWD|g;s|<user>|$USER|g" ./promtail/example_promtail.service > /etc/systemd/system/promtail.service
 echo "enter loki url:"
 read LOKI_URL
 echo "enter host_name:"
@@ -39,7 +39,7 @@ sudo systemctl start promtail.service
 sudo systemctl enable promtail.service
 
 echo -e "Promtail Service [${SUCCESS}promtail.service${NC}] created successfully."
-echo -e "Edit ${INFO}$PWD/node_exporter/config${NC} to add command-line arguments to the Node Exporter Service."
+echo -e "Edit ${INFO}$PWD/promtail/promtail-config.yml${NC} to configure Promtail."
 
 echo "-------------------------"
 

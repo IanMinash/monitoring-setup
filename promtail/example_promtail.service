@@ -1,0 +1,11 @@
+[Unit]
+Description=Daemon for Promtail
+After=network.target
+
+[Service]
+User=<user>
+WorkingDirectory=<current_dir>/promtail
+ExecStart=<current_dir>/promtail/promtail -config.file=<current_dir>/promtail/promtail-config.yml
+
+[Install]
+WantedBy=multi-user.target

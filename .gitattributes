@@ -1,0 +1,4 @@
+prometheus/prometheus filter=lfs diff=lfs merge=lfs -text
+prometheus/promtool filter=lfs diff=lfs merge=lfs -text
+promtail/promtail filter=lfs diff=lfs merge=lfs -text
+node_exporter/node_exporter filter=lfs diff=lfs merge=lfs -text

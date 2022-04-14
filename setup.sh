@@ -17,7 +17,7 @@ echo "Setting up Prometheus..."
 wget ${PROMETHEUS_URL}
 tar xvf prometheus-*
 rm prometheus-*.tar.gz
-mv prometheus-*/ prometheus/
+mv prometheus-*/ prometheus
 cp configs/prometheus.yml prometheus/prometheus.yml
 cp configs/prometheus_config prometheus/config
 
@@ -36,7 +36,7 @@ echo "Setting up Prometheus Node Exporter..."
 wget ${NODE_EXPORTER_URL}
 tar xvf node_exporter-*
 rm node_exporter-*.tar.gz
-mv node_exporter-*/ node_exporter/
+mv node_exporter-*/ node_exporter
 cp configs/node_exporter_config node_exporter/config
 sed -e "s|<current_dir>|$PWD|g;s|<user>|$USER|g" ./service_files/prom_node_exporter.service > /etc/systemd/system/prom_node_exporter.service
 

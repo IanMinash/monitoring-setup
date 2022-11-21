@@ -66,7 +66,7 @@ rm promtail-*.zip
 mv promtail/promtail-linux-amd64 promtail/promtail
 cp configs/node_exporter_config node_exporter/config
 
-sed -e "s|<current_dir>|$PWD|g;s|<user>|prometheus|g" ./service_files/promtail.service > /etc/systemd/system/promtail.service
+sed -e "s|<current_dir>|$PWD|g;s|<user>|prometheus|g" ./service_files/promtail.service > ./promtail/promtail.service
 sudo mv ./promtail/promtail.service /etc/systemd/system/
 
 echo "enter loki url:"

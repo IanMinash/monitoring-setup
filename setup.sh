@@ -29,7 +29,8 @@ mv prometheus-*/ prometheus
 cp configs/prometheus.yml prometheus/prometheus.yml
 cp configs/prometheus_config prometheus/config
 
-sed -e "s|<current_dir>|$PWD|g;s|<user>|prometheus|g" ./service_files/prom.service > /etc/systemd/system/prom.service
+sed -e "s|<current_dir>|$PWD|g;s|<user>|prometheus|g" ./service_files/prom.service > ./prometheus/prom.service
+sudo mv ./prometheus/prom.service /etc/systemd/system
 
 sudo systemctl start prom.service
 sudo systemctl enable prom.service
@@ -46,7 +47,8 @@ tar xvf node_exporter-*
 rm node_exporter-*.tar.gz
 mv node_exporter-*/ node_exporter
 cp configs/node_exporter_config node_exporter/config
-sed -e "s|<current_dir>|$PWD|g;s|<user>|prometheus|g" ./service_files/prom_node_exporter.service > /etc/systemd/system/prom_node_exporter.service
+sed -e "s|<current_dir>|$PWD|g;s|<user>|prometheus|g" ./service_files/prom_node_exporter.service > ./node_exporter/prom_node_exporter.service
+sudo mv ./node_exporter/prom_node_exporter.service /etc/systemd/system/
 
 sudo systemctl start prom_node_exporter.service
 sudo systemctl enable prom_node_exporter.service
@@ -65,6 +67,8 @@ mv promtail/promtail-linux-amd64 promtail/promtail
 cp configs/node_exporter_config node_exporter/config
 
 sed -e "s|<current_dir>|$PWD|g;s|<user>|prometheus|g" ./service_files/promtail.service > /etc/systemd/system/promtail.service
+sudo mv ./promtail/promtail.service /etc/systemd/system/
+
 echo "enter loki url:"
 read LOKI_URL
 echo "enter host_name:"

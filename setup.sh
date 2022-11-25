@@ -31,6 +31,9 @@ cp configs/prometheus_config prometheus/config
 
 sed -e "s|<current_dir>|$PWD|g;s|<user>|prometheus|g" ./service_files/prom.service > ./prometheus/prom.service
 sudo mv ./prometheus/prom.service /etc/systemd/system
+mkdir ./prometheus/data
+sudo chown -R prometheus prometheus
+sudo chgrp -R prometheus prometheus
 
 sudo systemctl start prom.service
 sudo systemctl enable prom.service

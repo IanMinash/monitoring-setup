@@ -16,9 +16,9 @@ then
 fi
 
 
-PROMTAIL_URL='https://github.com/grafana/loki/releases/download/v2.7.0/promtail-linux-amd64.zip'
-NODE_EXPORTER_URL='https://github.com/prometheus/node_exporter/releases/download/v1.4.0/node_exporter-1.4.0.linux-amd64.tar.gz'
-PROMETHEUS_URL='https://github.com/prometheus/prometheus/releases/download/v2.40.2/prometheus-2.40.2.linux-amd64.tar.gz'
+PROMTAIL_URL='https://github.com/grafana/loki/releases/download/v2.8.2/promtail-linux-amd64.zip'
+NODE_EXPORTER_URL='https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz'
+PROMETHEUS_URL='https://github.com/prometheus/prometheus/releases/download/v2.44.0/prometheus-2.44.0.linux-amd64.tar.gz'
 
 echo "Setting up Prometheus..."
 

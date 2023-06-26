@@ -15,75 +15,84 @@ then
     sudo usermod -a -G adm prometheus
 fi
 
+read -p "Do you want to install the latest version of Prometheus? (Y/n)" -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    PROMETHEUS_URL=$(curl -s https://api.github.com/repos/prometheus/prometheus/releases/latest | grep "browser_download_url.*linux-amd64.tar.gz" | cut -d : -f 2,3 | tr -d \")
+    echo "Setting up Prometheus..."
 
-PROMTAIL_URL='https://github.com/grafana/loki/releases/download/v2.8.2/promtail-linux-amd64.zip'
-NODE_EXPORTER_URL='https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz'
-PROMETHEUS_URL='https://github.com/prometheus/prometheus/releases/download/v2.44.0/prometheus-2.44.0.linux-amd64.tar.gz'
+    wget ${PROMETHEUS_URL}
+    tar xvf prometheus-*
+    rm prometheus-*.tar.gz
+    mv prometheus-*/ prometheus
+    cp configs/prometheus.yml prometheus/prometheus.yml
+    cp configs/prometheus_config prometheus/config
 
-echo "Setting up Prometheus..."
+    sed -e "s|<current_dir>|$PWD|g;s|<user>|prometheus|g" ./service_files/prom.service > ./prometheus/prom.service
+    sudo mv ./prometheus/prom.service /etc/systemd/system
+    mkdir ./prometheus/data
+    sudo chown -R prometheus prometheus
+    sudo chgrp -R prometheus prometheus
 
-wget ${PROMETHEUS_URL}
-tar xvf prometheus-*
-rm prometheus-*.tar.gz
-mv prometheus-*/ prometheus
-cp configs/prometheus.yml prometheus/prometheus.yml
-cp configs/prometheus_config prometheus/config
+    sudo systemctl start prom.service
+    sudo systemctl enable prom.service
 
-sed -e "s|<current_dir>|$PWD|g;s|<user>|prometheus|g" ./service_files/prom.service > ./prometheus/prom.service
-sudo mv ./prometheus/prom.service /etc/systemd/system
-mkdir ./prometheus/data
-sudo chown -R prometheus prometheus
-sudo chgrp -R prometheus prometheus
-
-sudo systemctl start prom.service
-sudo systemctl enable prom.service
-
-echo -e "Prometheus Service [${SUCCESS}prom.service${NC}] created successfully."
-echo -e "Edit ${INFO}$PWD/prometheus/prometheus-config.yml${NC} to add more integrations."
-
-echo "-------------------------"
-
-echo "Setting up Prometheus Node Exporter..."
-
-wget ${NODE_EXPORTER_URL}
-tar xvf node_exporter-*
-rm node_exporter-*.tar.gz
-mv node_exporter-*/ node_exporter
-cp configs/node_exporter_config node_exporter/config
-sed -e "s|<current_dir>|$PWD|g;s|<user>|prometheus|g" ./service_files/prom_node_exporter.service > ./node_exporter/prom_node_exporter.service
-sudo mv ./node_exporter/prom_node_exporter.service /etc/systemd/system/
-
-sudo systemctl start prom_node_exporter.service
-sudo systemctl enable prom_node_exporter.service
-
-echo -e "Prometheus Node Exporter Service [${SUCCESS}prom_node_exporter.service${NC}] created successfully."
-echo -e "Edit ${INFO}$PWD/node_exporter/config${NC} to add command-line arguments to the Node Exporter Service."
+    echo -e "Prometheus Service [${SUCCESS}prom.service${NC}] created successfully."
+    echo -e "Edit ${INFO}$PWD/prometheus/prometheus-config.yml${NC} to add more integrations."
+fi
 
 echo "-------------------------"
 
-echo "Setting up Promtail..."
+read -p "Do you want to install the latest version of Prometheus Node Exporter? (Y/n)" -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    NODE_EXPORTER_URL=$(curl -s https://api.github.com/repos/prometheus/node_exporter/releases/latest | grep "browser_download_url.*linux-amd64.tar.gz" | cut -d : -f 2,3 | tr -d \")
+    echo "Setting up Prometheus Node Exporter..."
 
-wget ${PROMTAIL_URL}
-unzip promtail-* -d promtail
-rm promtail-*.zip
-mv promtail/promtail-linux-amd64 promtail/promtail
-cp configs/node_exporter_config node_exporter/config
+    wget ${NODE_EXPORTER_URL}
+    tar xvf node_exporter-*
+    rm node_exporter-*.tar.gz
+    mv node_exporter-*/ node_exporter
+    cp configs/node_exporter_config node_exporter/config
+    sed -e "s|<current_dir>|$PWD|g;s|<user>|prometheus|g" ./service_files/prom_node_exporter.service > ./node_exporter/prom_node_exporter.service
+    sudo mv ./node_exporter/prom_node_exporter.service /etc/systemd/system/
 
-sed -e "s|<current_dir>|$PWD|g;s|<user>|prometheus|g" ./service_files/promtail.service > ./promtail/promtail.service
-sudo mv ./promtail/promtail.service /etc/systemd/system/
+    sudo systemctl start prom_node_exporter.service
+    sudo systemctl enable prom_node_exporter.service
 
-echo "enter loki url:"
-read LOKI_URL
-echo "enter host_name:"
-read HOST_NAME
-sed -e "s|<host_name>|$HOST_NAME|g;s|<loki_url>|$LOKI_URL|g" configs/example-promtail-config.yml > ./promtail/promtail-config.yml
-
-sudo systemctl start promtail.service
-sudo systemctl enable promtail.service
-
-echo -e "Promtail Service [${SUCCESS}promtail.service${NC}] created successfully."
-echo -e "Edit ${INFO}$PWD/promtail/promtail-config.yml${NC} to configure Promtail."
+    echo -e "Prometheus Node Exporter Service [${SUCCESS}prom_node_exporter.service${NC}] created successfully."
+    echo -e "Edit ${INFO}$PWD/node_exporter/config${NC} to add command-line arguments to the Node Exporter Service."
+fi
 
 echo "-------------------------"
 
+read -p "Do you want to install the latest version of Promtail? (Y/n)" -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then 
+    PROMTAIL_URL=$(curl -s https://api.github.com/repos/grafana/loki/releases/latest | grep "browser_download_url.*promtail.*linux-amd64.zip" | cut -d : -f 2,3 | tr -d \") 
+    echo "Setting up Promtail..."
 
+    wget ${PROMTAIL_URL}
+    unzip promtail-* -d promtail
+    rm promtail-*.zip
+    mv promtail/promtail-linux-amd64 promtail/promtail
+    sed -e "s|<current_dir>|$PWD|g;s|<user>|prometheus|g" ./service_files/promtail.service > ./promtail/promtail.service
+    sudo mv ./promtail/promtail.service /etc/systemd/system/
+
+    echo "enter loki url:"
+    read LOKI_URL
+    echo "enter host_name:"
+    read HOST_NAME
+    sed -e "s|<host_name>|$HOST_NAME|g;s|<loki_url>|$LOKI_URL|g" configs/example-promtail-config.yml > ./promtail/promtail-config.yml
+
+    sudo systemctl start promtail.service
+    sudo systemctl enable promtail.service
+
+    echo -e "Promtail Service [${SUCCESS}promtail.service${NC}] created successfully."
+    echo -e "Edit ${INFO}$PWD/promtail/promtail-config.yml${NC} to add more integrations."
+fi
+
+echo "Installation complete!"

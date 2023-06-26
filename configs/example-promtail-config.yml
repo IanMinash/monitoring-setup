@@ -28,3 +28,15 @@ scrape_configs:
   relabel_configs:
     - source_labels: ['__journal__systemd_unit']
       target_label: 'unit'
+- job_name: docker
+  pipeline_stages:
+  - docker: {}
+  - static_labels:
+      host: <host_name>
+  docker_sd_configs:
+  - host: unix:///var/run/docker.sock
+    refresh_interval: 5s
+  relabel_configs:
+  - source_labels: ['__meta_docker_container_name']
+    regex: '/(.*)'
+    target_label: 'container'
